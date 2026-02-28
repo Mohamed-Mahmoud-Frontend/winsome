@@ -136,21 +136,23 @@ export async function GET(
     return NextResponse.json({ error: "Missing hotel id" }, { status: 400 });
   }
 
-  // 1) Try mock first (supports place_id and slug)
-  const mockHotel = getHotelById(id);
-  if (mockHotel) {
-    const recommended = getRecommendedHotels(mockHotel, 4);
-    return NextResponse.json({ hotel: mockHotel, recommended });
-  }
-
-  // 2) If not in mock and we have SearchApi key, fetch from Google Hotels Property API
   const { searchParams } = new URL(request.url);
   const checkIn = searchParams.get("check_in") ?? searchParams.get("check_in_date") ?? new Date().toISOString().slice(0, 10);
   const checkOut = searchParams.get("check_out") ?? searchParams.get("check_out_date") ?? new Date(Date.now() + 86400000).toISOString().slice(0, 10);
 
-  const fromApi = await fetchPropertyFromSearchApi(id, checkIn, checkOut);
-  if (fromApi) {
-    return NextResponse.json(fromApi);
+  // 1) When SearchApi key is set, use real API first
+  if (process.env.SEARCHAPI_KEY) {
+    const fromApi = await fetchPropertyFromSearchApi(id, checkIn, checkOut);
+    if (fromApi) {
+      return NextResponse.json(fromApi);
+    }
+  }
+
+  // 2) Fallback to mock (supports place_id and slug) when no key or API returned nothing
+  const mockHotel = getHotelById(id);
+  if (mockHotel) {
+    const recommended = getRecommendedHotels(mockHotel, 4);
+    return NextResponse.json({ hotel: mockHotel, recommended });
   }
 
   return NextResponse.json({ error: "Hotel not found" }, { status: 404 });

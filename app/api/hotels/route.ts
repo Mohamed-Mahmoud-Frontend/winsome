@@ -4,11 +4,11 @@ import type { HotelResult } from "@/types/hotel";
 
 const SEARCHAPI_BASE = "https://www.searchapi.io/api/v1/search";
 
-/** Use mock when USE_MOCK_HOTELS is set (default) or when SEARCHAPI_KEY is missing. */
+/** Use real SearchApi data when SEARCHAPI_KEY is set; use mock only when key is missing or USE_MOCK_HOTELS=1. */
 function isMockHotelsEnabled(): boolean {
-  const useMock = process.env.USE_MOCK_HOTELS !== "0";
+  const forceMock = process.env.USE_MOCK_HOTELS === "1";
   const hasKey = !!process.env.SEARCHAPI_KEY;
-  return useMock || !hasKey;
+  return forceMock || !hasKey;
 }
 
 /** Map SearchApi.io "properties" item to our HotelResult shape. */
