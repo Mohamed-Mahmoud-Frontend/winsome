@@ -56,6 +56,11 @@ const nextConfig: NextConfig = {
         hostname: "cdn.worldota.net",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "i.giatamedia.com",
+        pathname: "/**",
+      },
     ],
   },
 };

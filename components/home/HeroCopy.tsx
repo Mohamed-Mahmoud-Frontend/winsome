@@ -48,13 +48,13 @@ export function HeroCopy() {
           <span className="text-amber-800 dark:text-amber-400">on the map.</span>
         </h1>
       </div>
-      <p className="max-w-md text-base leading-relaxed text-zinc-700 dark:text-zinc-400">
+      <p className="max-w-md text-base leading-relaxed text-zinc-800 dark:text-zinc-300">
         Search by location, compare hotels with an interactive map, and see
         availability and details in one place. No clutter—just the right
         hotel, fast.
       </p>
 
-      <ul className="flex flex-col gap-4 text-sm text-zinc-700 dark:text-zinc-400">
+      <ul className="flex flex-col gap-4 text-sm text-zinc-800 dark:text-zinc-300">
         {FEATURES.map(({ icon, label }) => (
           <li key={label} className="flex items-center gap-3">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
@@ -75,7 +75,7 @@ export function HeroCopy() {
       <div className="pt-2">
         <Link
           href="/hotels"
-          className="inline-flex items-center gap-2 rounded-xl bg-amber-600 px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-amber-900/20 transition hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:bg-amber-500 dark:text-zinc-900 dark:hover:bg-amber-400 dark:focus:ring-offset-zinc-950"
+          className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-amber-600 px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-amber-900/20 transition hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:bg-amber-500 dark:text-zinc-900 dark:hover:bg-amber-400 dark:focus:ring-offset-zinc-950"
         >
           Search hotels
           <svg

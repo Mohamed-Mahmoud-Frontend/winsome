@@ -302,7 +302,7 @@ export function HotelFiltersBar() {
           className={triggerClass}
           aria-expanded={open === "rating"}
         >
-          <IconStar className="text-amber-500" />
+          <IconStar className="text-amber-700 dark:text-amber-400" />
           {ratingLabel}
           <IconChevronDown className="ml-0.5" />
         </button>

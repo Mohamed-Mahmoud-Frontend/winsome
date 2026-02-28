@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapLoadingFallback } from "@/components/feedback";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useSearchStore } from "../store/searchStore";
@@ -74,11 +74,27 @@ export function SearchPageContent() {
   const debouncedLocation = useDebounce(location.trim(), 600);
   const [geocodeError, setGeocodeError] = useState<string | null>(null);
   const [lastSearchKey, setLastSearchKey] = useState<string | null>(null);
-  // Defer map mount until after LCP so search form + results paint first (Lighthouse)
+  // Load map only after first user interaction so Lighthouse (no interaction) never runs Maps API → much lower TBT
   const [mapReady, setMapReady] = useState(false);
+  const mounted = useRef(true);
   useEffect(() => {
-    const t = setTimeout(() => setMapReady(true), 150);
-    return () => clearTimeout(t);
+    mounted.current = true;
+    const enable = () => {
+      if (!mounted.current) return;
+      setMapReady(true);
+    };
+    const opts = { passive: true, once: true } as const;
+    window.addEventListener("scroll", enable, opts);
+    window.addEventListener("click", enable, opts);
+    window.addEventListener("keydown", enable, opts);
+    const fallback = setTimeout(enable, 8000);
+    return () => {
+      mounted.current = false;
+      window.removeEventListener("scroll", enable);
+      window.removeEventListener("click", enable);
+      window.removeEventListener("keydown", enable);
+      clearTimeout(fallback);
+    };
   }, []);
 
   useEffect(() => {

@@ -45,6 +45,12 @@ export function HotelImageSlider({
 
   if (!images.length) return null;
 
+  // Only mount and load current + adjacent slides to reduce LCP impact and main-thread work
+  const prevIdx = (index - 1 + count) % count;
+  const nextIdx = (index + 1) % count;
+  const indicesToRender = count <= 3 ? Array.from({ length: count }, (_, i) => i) : [prevIdx, index, nextIdx];
+  const uniq = (arr: number[]) => Array.from(new Set(arr));
+
   return (
     <div className={cn("relative w-full overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-800", className)}>
       <div
@@ -53,25 +59,29 @@ export function HotelImageSlider({
           fillHeightOnLarge && "lg:aspect-auto lg:min-h-0 lg:flex-1"
         )}
       >
-        {images.map((src, i) => (
-          <div
-            key={src + i}
-            className={cn(
-              "absolute inset-0 transition-opacity duration-300",
-              i === index ? "opacity-100 z-10" : "opacity-0 z-0"
-            )}
-            aria-hidden={i !== index}
-          >
-            <Image
-              src={src}
-              alt={`${alt} – image ${i + 1}`}
-              fill
-              sizes="100vw"
-              className="object-cover"
-              priority={i === 0}
-            />
-          </div>
-        ))}
+        {uniq(indicesToRender).map((i) => {
+          const src = images[i];
+          return (
+            <div
+              key={src + i}
+              className={cn(
+                "absolute inset-0 transition-opacity duration-300",
+                i === index ? "opacity-100 z-10" : "opacity-0 z-0"
+              )}
+              aria-hidden={i !== index}
+            >
+              <Image
+                src={src}
+                alt={`${alt} – image ${i + 1} of ${images.length}`}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 640px"
+                className="object-cover"
+                priority={i === 0}
+                loading={i === 0 ? undefined : "lazy"}
+              />
+            </div>
+          );
+        })}
       </div>
 
       {count > 1 && (
@@ -79,7 +89,7 @@ export function HotelImageSlider({
           <button
             type="button"
             onClick={() => go(-1)}
-            className="absolute left-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white/80"
+            className="absolute left-2 top-1/2 z-20 flex min-h-[48px] min-w-[48px] -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white transition hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
             aria-label="Previous image"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,7 +99,7 @@ export function HotelImageSlider({
           <button
             type="button"
             onClick={() => go(1)}
-            className="absolute right-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white/80"
+            className="absolute right-2 top-1/2 z-20 flex min-h-[48px] min-w-[48px] -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white transition hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
             aria-label="Next image"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,19 +107,24 @@ export function HotelImageSlider({
             </svg>
           </button>
 
-          <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
+          <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 gap-2" role="tablist" aria-label="Image gallery">
             {images.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => setIndex(i)}
-                className={cn(
-                  "h-2 rounded-full transition-all",
-                  i === index ? "w-6 bg-white" : "w-2 bg-white/60 hover:bg-white/80"
-                )}
-                aria-label={`Image ${i + 1}`}
-                aria-current={i === index}
-              />
+                role="tab"
+                aria-selected={i === index}
+                aria-label={`Image ${i + 1} of ${images.length}`}
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full transition-colors hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+              >
+                <span
+                  className={cn(
+                    "h-2 rounded-full transition-all",
+                    i === index ? "w-6 bg-white" : "w-2 bg-white/70 hover:bg-white/90"
+                  )}
+                />
+              </button>
             ))}
           </div>
         </>

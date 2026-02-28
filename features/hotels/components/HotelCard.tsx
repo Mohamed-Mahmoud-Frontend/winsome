@@ -60,8 +60,8 @@ export function HotelCard({
             {hotel.title}
           </h3>
           {hotel.rating != null && (
-            <div className="mt-1 flex items-center gap-1 text-sm text-zinc-600 dark:text-zinc-400">
-              <span className="font-medium text-amber-600 dark:text-amber-500">
+            <div className="mt-1 flex items-center gap-1 text-sm text-zinc-700 dark:text-zinc-300">
+              <span className="font-medium text-amber-700 dark:text-amber-400">
                 ★ {hotel.rating.toFixed(1)}
               </span>
               {hotel.reviews != null && (
@@ -70,14 +70,14 @@ export function HotelCard({
             </div>
           )}
           {description && (
-            <p className="mt-2 line-clamp-2 text-sm text-zinc-600 dark:text-zinc-400">
+            <p className="mt-2 line-clamp-2 text-sm text-zinc-700 dark:text-zinc-300">
               {description}
             </p>
           )}
           {hotel.price && (
             <p className="mt-3 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
               ${hotel.price.amount}
-              <span className="text-sm font-normal text-zinc-500 dark:text-zinc-400">
+              <span className="text-sm font-normal text-zinc-600 dark:text-zinc-300">
                 {" "}
                 / {hotel.price.period ?? "night"}
               </span>

@@ -53,10 +53,12 @@ export function useHotelsInfinite({ search, mapCenter, mapBounds, enabled = true
 
   const query = useInfiniteQuery({
     queryKey,
-    queryFn: async ({ pageParam = 1, signal }) =>
-      fetchHotelsPage({
-        pageParam: pageParam as number | string,
-        signal,
+    queryFn: async (context: { pageParam: string | number; signal: AbortSignal }) => {
+      const pageParam = context.pageParam ?? 1;
+      const page = typeof pageParam === "number" ? pageParam : Number(pageParam);
+      return fetchHotelsPage({
+        pageParam: page,
+        signal: context.signal,
         bounds: debouncedBounds ?? undefined,
         search: {
           q: search.q,
@@ -64,7 +66,8 @@ export function useHotelsInfinite({ search, mapCenter, mapBounds, enabled = true
           checkOut: search.checkOut,
           adults: search.adults,
         },
-      }),
+      });
+    },
     getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
     initialPageParam: 1,
     enabled,
